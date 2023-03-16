@@ -1,0 +1,12 @@
+services:
+  postgresdb:
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: beatrix
+      POSTGRES_PASSWORD: beatrix
+      PGDATA: /data/postgres
+    volumes:
+      - ./.data/postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
