@@ -49,7 +49,7 @@ defmodule Beatrix.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 2.0"},
-      {:md, "~> 0.1"}
+      {:earmark, "~> 1.4"},
     ]
   end
 
