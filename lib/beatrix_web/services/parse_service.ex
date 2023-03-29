@@ -3,8 +3,7 @@ defmodule BeatrixWeb.ParseService do
 
   def process_awesome_list do
     awesome_list_md = make_request(@awesome_elixir_readme_url)
-    Earmark.as_ast!(awesome_list_md)
-    # TODO: parse md ast
+    awesome_list_ast = Earmark.as_ast!(awesome_list_md)
   end
 
   def make_request(url) do
@@ -17,4 +16,7 @@ defmodule BeatrixWeb.ParseService do
         IO.inspect reason
     end
   end
+
+
+
 end
