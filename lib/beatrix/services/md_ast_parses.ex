@@ -43,17 +43,16 @@ defmodule Beatrix.Services.MdAstParses do
         Logger.info(
           "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: Unknown"
         )
+
       [{"p", [], [{"a", [{"href", url}], [repo_name], %{}}, description], %{}} | _] ->
         Logger.info(
           "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
         )
+
       _ ->
         Logger.warning(repo_data)
     end
 
     parse_save(:repos, category_name, repos_tail, processed_list)
   end
-
 end
-
-

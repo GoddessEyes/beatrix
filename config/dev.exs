@@ -65,16 +65,14 @@ config :beatrix, BeatrixWeb.Endpoint,
   ]
 
 # Do not include metadata nor timestamps in development logs
-Logger.add_backend {LoggerFileBackend, :info}
+Logger.add_backend({LoggerFileBackend, :info})
 
 config :logger,
   backends: [:console, {LoggerFileBackend, :file_log}]
 
-config :logger, :console,
-  format: "[$level] $message\n"
+config :logger, :console, format: "[$level] $message\n"
 
-config :logger, :file_log,
-  path: "info.log"
+config :logger, :file_log, path: "info.log"
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
