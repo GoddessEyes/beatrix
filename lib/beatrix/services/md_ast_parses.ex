@@ -1,5 +1,7 @@
 defmodule Beatrix.Services.MdAstParses do
   require Logger
+  alias Beatrix.Repo
+  alias Beatrix.Category
 
   def parse_save([]), do: Logger.info('Success!')
 
@@ -9,7 +11,17 @@ defmodule Beatrix.Services.MdAstParses do
   end
 
   def parse_save(tail, {"h2", [], [category_name], %{}}) do
-    Logger.info("Find category: #{category_name}")
+    {result, changeset} = %Category{}
+    |> Category.changeset(%{name: category_name})
+    |> Repo.insert()
+
+    case {result, changeset} do
+      {:ok, changeset} ->
+        Logger.info("Find and save category: #{category_name}")
+      {:error, changeset} ->
+        Logger.info("Category: #{category_name} already exist")
+    end
+
     parse_save(:category, category_name, tail)
   end
 
