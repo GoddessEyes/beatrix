@@ -2,6 +2,7 @@ defmodule Beatrix.Services.MdAstParses do
   require Logger
   alias Beatrix.Repo
   alias Beatrix.Category
+  alias Beatrix.Repository
 
   def parse_save([]), do: Logger.info('Success!')
 
@@ -11,60 +12,92 @@ defmodule Beatrix.Services.MdAstParses do
   end
 
   def parse_save(tail, {"h2", [], [category_name], %{}}) do
-    {result, changeset} = %Category{}
-    |> Category.changeset(%{name: category_name})
-    |> Repo.insert()
+    {result, changeset} =
+      %Category{}
+      |> Category.changeset(%{name: category_name})
+      |> Repo.insert()
 
     case {result, changeset} do
       {:ok, changeset} ->
-        Logger.info("Find and save category: #{category_name}")
-      {:error, changeset} ->
-        Logger.info("Category: #{category_name} already exist")
-    end
+        Logger.info("Find and save category: #{changeset.name}")
+        parse_save(:category, changeset, tail)
 
-    parse_save(:category, category_name, tail)
+      {:error, _} ->
+        category_instance = Repo.get_by(Category, name: category_name)
+        parse_save(:category, category_instance, tail)
+        Logger.info("Category: #{category_instance.name} already exist")
+    end
   end
 
   def parse_save(tail, _) do
     parse_save(tail)
   end
 
-  def parse_save(:category, category_name, list) do
+  def parse_save(:category, category, list) do
     [_, head | _] = list
     {"ul", [], list_repos, %{}} = head
-    parse_save(:repos, category_name, list_repos, list)
+    parse_save(:repos, category, list_repos, list)
   end
 
-  def parse_save(:repos, _category_name, [], processed_list) do
+  def parse_save(:repos, _category, [], processed_list) do
     parse_save(processed_list)
   end
 
-  def parse_save(:repos, category_name, list_repos, processed_list) do
+  def parse_save(:repos, category, list_repos, processed_list) do
     [head | tail] = list_repos
-    parse_save(:repo, category_name, head, tail, processed_list)
+    parse_save(:repo, category, head, tail, processed_list)
   end
 
-  def parse_save(:repo, category_name, {"li", [], repo_data, %{}}, repos_tail, processed_list) do
+  def parse_save(
+        :repo,
+        category,
+        {"li", [], repo_data, %{}},
+        repos_tail,
+        processed_list
+      ) do
     case repo_data do
       [{"a", [{"href", url}], [repo_name], %{}}, description | _] ->
         Logger.info(
-          "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
+          "Find. Cat: #{category.name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
         )
 
-      [{"a", [{"href", url}], [repo_name], %{}} | _] ->
-        Logger.info(
-          "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: Unknown"
-        )
+        {result, _} =
+          %Repository{}
+          |> Repository.changeset(%{
+            description: description,
+            repo_name: repo_name,
+            url: url
+          })
+          |> Kernel.then(fn changeset -> changeset.changes end)
+          |> Kernel.then(fn changes -> Ecto.build_assoc(category, :repositories, changes) end)
+          |> Repo.insert()
 
-      [{"p", [], [{"a", [{"href", url}], [repo_name], %{}}, description], %{}} | _] ->
-        Logger.info(
-          "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
-        )
+        case result do
+          :ok ->
+            Logger.info(
+              "Find and save. Cat: #{category.name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
+            )
+
+          :error ->
+            Logger.info(
+              "Already exist. Cat: #{category.name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
+            )
+        end
 
       _ ->
         Logger.warning(repo_data)
     end
 
-    parse_save(:repos, category_name, repos_tail, processed_list)
+    parse_save(:repos, category, repos_tail, processed_list)
   end
 end
+
+#      [{"a", [{"href", url}], [repo_name], %{}} | _] ->
+#        Logger.info(
+#          "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: Unknown"
+#        )
+#
+#      [{"p", [], [{"a", [{"href", url}], [repo_name], %{}}, description], %{}} | _] ->
+#        Logger.info(
+#          "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
+#        )

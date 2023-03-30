@@ -6,12 +6,11 @@ defmodule Beatrix.Repository do
     field :description, :string
     field :repo_name, :string
     field :url, :string
-    field :category_id, :id
+    belongs_to :category, Beatrix.Category
 
     timestamps()
   end
 
-  @doc false
   def changeset(repository, attrs) do
     repository
     |> cast(attrs, [:url, :repo_name, :description])
