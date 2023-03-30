@@ -1,9 +1,11 @@
-defmodule BeatrixWeb.ParseService do
+defmodule Beatrix.ParseService do
+  alias Beatrix.Services.MdAstParses, as: MdAstParses
   @awesome_elixir_readme_url "https://raw.githubusercontent.com/h4cc/awesome-elixir/master/README.md"
 
   def process_awesome_list do
-    awesome_list_md = make_request(@awesome_elixir_readme_url)
-    awesome_list_ast = Earmark.as_ast!(awesome_list_md)
+    make_request(@awesome_elixir_readme_url) |>
+    Earmark.as_ast! |>
+    MdAstParses.parse_save
   end
 
   def make_request(url) do
@@ -17,6 +19,5 @@ defmodule BeatrixWeb.ParseService do
     end
   end
 
-
-
 end
+#Beatrix.ParseService.process_awesome_list()

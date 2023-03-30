@@ -50,6 +50,7 @@ defmodule Beatrix.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 2.0"},
       {:earmark, "~> 1.4"},
+      {:logger_file_backend, "~> 0.0.13"}
     ]
   end
 

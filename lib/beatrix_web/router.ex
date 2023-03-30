@@ -19,10 +19,4 @@ defmodule BeatrixWeb.Router do
 
     get "/", PageController, :index
   end
-
-  scope "/", BeatrixWeb do
-    pipe_through :browser
-
-    get "/parse", ParseController, :index
-  end
 end
