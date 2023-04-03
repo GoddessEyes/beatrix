@@ -1,5 +1,5 @@
 defmodule Beatrix.ParseService do
-  alias Beatrix.Services.MdAstParses, as: MdAstParses
+  alias Beatrix.Services.MdAstParses
 
   @awesome_elixir_readme_url "https://raw.githubusercontent.com/h4cc/awesome-elixir/master/README.md"
 

@@ -15,6 +15,5 @@ defmodule Beatrix.Repository do
     repository
     |> cast(attrs, [:url, :repo_name, :description])
     |> validate_required([:url, :repo_name, :description])
-    |> unique_constraint(:url)
   end
 end

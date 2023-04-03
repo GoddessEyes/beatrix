@@ -24,8 +24,8 @@ defmodule Beatrix.Services.MdAstParses do
 
       {:error, _} ->
         category_instance = Repo.get_by(Category, name: category_name)
-        parse_save(:category, category_instance, tail)
         Logger.info("Category: #{category_instance.name} already exist")
+        parse_save(:category, category_instance, tail)
     end
   end
 
@@ -60,6 +60,18 @@ defmodule Beatrix.Services.MdAstParses do
         Logger.info(
           "Find. Cat: #{category.name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
         )
+
+        repository_instance =
+          Repo.get_by(Repository, repo_name: repo_name, category_id: category.id)
+
+        case repository_instance do
+          nil ->
+            Logger.info("Repository does not exist. Creating")
+
+          _ ->
+            Logger.info("Repository exist. Skip")
+            parse_save(:repos, category, repos_tail, processed_list)
+        end
 
         {result, _} =
           %Repository{}

@@ -1,0 +1,10 @@
+<%= for  category  <-  @categories  do %>
+    <ul>
+        <%= category.name %>:
+        <%= for  repository  <-  category.repositories  do %>
+            <li>
+                <%= link repository.repo_name, to: repository.url, target: "_blank" %> <%= repository.description %>
+            </li>
+        <% end %>
+    </ul>
+<% end %>
