@@ -19,12 +19,10 @@ defmodule Beatrix.Services.MdAstParses do
 
     case {result, changeset} do
       {:ok, changeset} ->
-        Logger.info("Find and save category: #{changeset.name}")
         parse_save(:category, changeset, tail)
 
       {:error, _} ->
         category_instance = Repo.get_by(Category, name: category_name)
-        Logger.info("Category: #{category_instance.name} already exist")
         parse_save(:category, category_instance, tail)
     end
   end
@@ -57,59 +55,44 @@ defmodule Beatrix.Services.MdAstParses do
       ) do
     case repo_data do
       [{"a", [{"href", url}], [repo_name], %{}}, description | _] ->
-        Logger.info(
-          "Find. Cat: #{category.name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
-        )
+        owner_name = get_repo_owner(url)
 
-        repository_instance =
-          Repo.get_by(Repository, repo_name: repo_name, category_id: category.id)
-
-        case repository_instance do
-          nil ->
-            Logger.info("Repository does not exist. Creating")
-
-          _ ->
-            Logger.info("Repository exist. Skip")
+        cond do
+          owner_name === nil ->
             parse_save(:repos, category, repos_tail, processed_list)
-        end
 
-        {result, _} =
-          %Repository{}
-          |> Repository.changeset(%{
-            description: description,
-            repo_name: repo_name,
-            url: url
-          })
-          |> Kernel.then(fn changeset -> changeset.changes end)
-          |> Kernel.then(fn changes -> Ecto.build_assoc(category, :repositories, changes) end)
-          |> Repo.insert()
+          true ->
+            repository_instance = Repo.get_by(Repository, repo_name: repo_name)
 
-        case result do
-          :ok ->
-            Logger.info(
-              "Find and save. Cat: #{category.name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
-            )
+            case repository_instance do
+              nil ->
+                Repository.save_repository_link_to_category(
+                  repo_name,
+                  url,
+                  owner_name,
+                  description,
+                  category
+                )
 
-          :error ->
-            Logger.info(
-              "Already exist. Cat: #{category.name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
-            )
+                parse_save(:repos, category, repos_tail, processed_list)
+
+              _ ->
+                parse_save(:repos, category, repos_tail, processed_list)
+            end
         end
 
       _ ->
-        Logger.warning(repo_data)
+        parse_save(:repos, category, repos_tail, processed_list)
     end
+  end
 
-    parse_save(:repos, category, repos_tail, processed_list)
+  defp get_repo_owner(github_url) do
+    try do
+      "https://github.com/" <> repo_own_url = github_url
+      [owner_name, _] = String.split(repo_own_url, "/")
+      owner_name
+    rescue
+      _ -> nil
+    end
   end
 end
-
-#      [{"a", [{"href", url}], [repo_name], %{}} | _] ->
-#        Logger.info(
-#          "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: Unknown"
-#        )
-#
-#      [{"p", [], [{"a", [{"href", url}], [repo_name], %{}}, description], %{}} | _] ->
-#        Logger.info(
-#          "Find. Cat: #{category_name} | url: #{url} | repo_name: #{repo_name} | description: #{description}"
-#        )

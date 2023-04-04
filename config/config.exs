@@ -10,6 +10,10 @@ import Config
 config :beatrix,
   ecto_repos: [Beatrix.Repo]
 
+config :beatrix,
+  token:
+    nil
+
 # Configures the endpoint
 config :beatrix, BeatrixWeb.Endpoint,
   url: [host: "localhost"],
