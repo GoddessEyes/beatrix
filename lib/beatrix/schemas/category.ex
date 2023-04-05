@@ -4,7 +4,7 @@ defmodule Beatrix.Category do
 
   schema "categories" do
     field :name, :string
-    has_many :repositories, Beatrix.Repository
+    has_many :repositories, Beatrix.Schemas.Repository
 
     timestamps()
   end

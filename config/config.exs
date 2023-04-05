@@ -11,8 +11,7 @@ config :beatrix,
   ecto_repos: [Beatrix.Repo]
 
 config :beatrix,
-  token:
-    nil
+  token: nil
 
 # Configures the endpoint
 config :beatrix, BeatrixWeb.Endpoint,
