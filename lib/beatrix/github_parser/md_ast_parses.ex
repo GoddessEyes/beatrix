@@ -1,8 +1,8 @@
 defmodule Beatrix.GithubParser.ResponseProcessing do
   require Logger
   alias Beatrix.Repo
-  alias Beatrix.Category
-  alias Beatrix.Repository
+  alias Beatrix.Schemas.Repository
+  alias Beatrix.Schemas.Category
 
   def parse_and_save([]), do: Logger.info('Task finished')
 
@@ -24,7 +24,11 @@ defmodule Beatrix.GithubParser.ResponseProcessing do
 
       {:error, _} ->
         category_instance = Repo.get_by(Category, name: category_name)
-        Logger.info('Category #{category_instance.name} exist. Try parse repositories in category')
+
+        Logger.info(
+          'Category #{category_instance.name} exist. Try parse repositories in category'
+        )
+
         parse_and_save(:category, category_instance, tail)
     end
   end
@@ -88,7 +92,7 @@ defmodule Beatrix.GithubParser.ResponseProcessing do
     end
   end
 
-  defp get_repo_owner(github_url) do
+  def get_repo_owner(github_url) do
     try do
       "https://github.com/" <> repo_own_url = github_url
       [owner_name, _] = String.split(repo_own_url, "/")

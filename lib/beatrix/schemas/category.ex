@@ -1,4 +1,4 @@
-defmodule Beatrix.Category do
+defmodule Beatrix.Schemas.Category do
   use Ecto.Schema
   import Ecto.Changeset
 

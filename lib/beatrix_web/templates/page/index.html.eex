@@ -3,7 +3,8 @@
         <%= category.name %>:
         <%= for  repository  <-  category.repositories  do %>
             <li>
-                <%= link repository.repo_name, to: repository.url, target: "_blank" %> <%= repository.description %>
+                <%= link repository.repo_name, to: repository.url, target: "_blank" %>
+                <%= repository.description %> | Star: <%= repository.star_count %>
             </li>
         <% end %>
     </ul>

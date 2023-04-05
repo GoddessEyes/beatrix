@@ -1,28 +1,39 @@
 defmodule Beatrix.GithubParser.Github do
   use HTTPoison.Base
+
   @awesome_elixir_readme_url "https://raw.githubusercontent.com/h4cc/awesome-elixir/master/README.md"
   @repo_url "https://api.github.com/repos/"
   @github_token Application.compile_env(:beatrix, :token)
 
   def async_stream_for_repos_star_count(repo_url_list) do
-    tasks =
-      Task.async_stream(repo_url_list, fn url ->
-        HTTPoison.get(url, Authorization: "Bearer #{@github_token}")
-      end)
+    repo_url_list
+    |> Task.async_stream(&make_auth_request_for_start_count/1)
+    |> Enum.into([], fn {:ok, [id, start_count]} -> [id, start_count] end)
+  end
 
-    Enum.into(tasks, [], fn {:ok, res} ->
-      {:ok, res} = res
-      res.body
-      |> Jason.decode!()
-      |> Kernel.then(fn body -> {Map.fetch!(body, "name"), Map.fetch!(body, "stargazers_count")} end)
-    end)
+  def make_auth_request_for_start_count([id, url]) do
+    case HTTPoison.get(url, [Authorization: "Bearer #{@github_token}"], follow_redirect: true) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        start_count =
+          body
+          |> Jason.decode!()
+          |> Map.fetch!("stargazers_count")
+
+        [id, start_count]
+
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        [id, 0]
+
+      {:error, %HTTPoison.Error{reason: _}} ->
+        [id, 0]
+    end
   end
 
   def build_repos_urls(list_repos) do
-    Enum.map(list_repos, fn [owner_name, repository_name] -> build_repo_url(owner_name, repository_name) end)
+    Enum.map(list_repos, fn [id, owner, name] -> [id, build_repo_url([owner, name])] end)
   end
 
-  def build_repo_url(owner_name, repository_name) do
+  def build_repo_url([owner_name, repository_name]) do
     @repo_url <> owner_name <> "/" <> repository_name
   end
 
