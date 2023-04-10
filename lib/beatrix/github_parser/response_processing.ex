@@ -1,4 +1,4 @@
-defmodule Beatrix.GithubParser.Processing do
+defmodule Beatrix.GithubParser.ResponseProcessing do
   alias Beatrix.GithubParser.Github
   alias Beatrix.Schemas.Repository
   alias Beatrix.GithubParser.AwesomeParser

@@ -14,6 +14,7 @@ Description.
 ## TestCategory
 *Some description.*
 * [testrepo](https://github.com/testowner/testrepo) - Description.
+* [Invalid repo](invalid-url) - Description
 "
 
   test "Parse awesome-elixir response" do
