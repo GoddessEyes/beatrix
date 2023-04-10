@@ -6,7 +6,7 @@
                 Repo: <%= link repository.repo_name, to: repository.url, target: "_blank" %> </br>
                 Description: <%= repository.description %> <br>
                 Star: <%= repository.star_count %> <br>
-                Pushed at: <%= repository.pushed_at %> <br>
+                Pushed at: <%= Timex.diff(DateTime.utc_now, repository.pushed_at, :days) %> days ago<br>
             </li>
         <% end %>
     </ul>
