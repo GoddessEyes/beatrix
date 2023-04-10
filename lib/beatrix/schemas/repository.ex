@@ -22,12 +22,12 @@ defmodule Beatrix.Schemas.Repository do
     |> validate_required([:url, :repo_name, :description])
   end
 
-  def get_all_repos_owner_name do
+  def select_repos_owner_repo_name do
     from(repo in "repositories", select: [repo.id, repo.owner_name, repo.repo_name])
     |> Repo.all()
   end
 
-  def bulk_update_star_count_by_name(list) do
+  def bulk_update_star_count_pushed_at(list) do
     Enum.map(list, fn [id, {pushed_at, star_count}] ->
       pushed_at_datetime =
         if !is_nil(pushed_at) do

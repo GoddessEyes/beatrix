@@ -1,18 +1,16 @@
 defmodule Beatrix.GithubParser.Processing do
   alias Beatrix.GithubParser.Github
   alias Beatrix.Schemas.Repository
-  alias Beatrix.GithubParser.ResponseProcessing
+  alias Beatrix.GithubParser.AwesomeParser
 
   def start do
-    #    Github.get_awesome_list()
-    #    |> Earmark.as_ast!()
-    #    |> ResponseProcessing.parse_and_save()
+    Github.get_awesome_list()
+    |> Earmark.as_ast!()
+    |> AwesomeParser.parse_and_save()
 
-    Repository.get_all_repos_owner_name()
+    Repository.select_repos_owner_repo_name()
     |> Github.build_repos_urls()
-    |> Github.async_stream_for_repos_star_count()
-    |> Repository.bulk_update_star_count_by_name()
+    |> Github.async_stream_for_repos()
+    |> Repository.bulk_update_star_count_pushed_at()
   end
 end
-
-# Beatrix.GithubParser.Processing.start

@@ -5,11 +5,9 @@ defmodule Beatrix.GithubParser.Github do
   @repo_url "https://api.github.com/repos/"
   @github_token Application.compile_env(:beatrix, :token)
 
-  def async_stream_for_repos_star_count(repo_url_list) do
-    IO.puts(@github_token)
-
+  def async_stream_for_repos(repo_url_list) do
     repo_url_list
-    |> Task.async_stream(&make_auth_request_for_start_count/1,
+    |> Task.async_stream(&make_auth_request_fetch_fields/1,
       max_concurrency: 500,
       timeout: 20000
     )
@@ -19,7 +17,7 @@ defmodule Beatrix.GithubParser.Github do
     end)
   end
 
-  def make_auth_request_for_start_count([id, url]) do
+  def make_auth_request_fetch_fields([id, url]) do
     case HTTPoison.get(url, [Authorization: "Bearer #{@github_token}"], follow_redirect: true) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         repo_data =

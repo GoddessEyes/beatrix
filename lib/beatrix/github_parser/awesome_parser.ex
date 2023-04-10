@@ -1,4 +1,4 @@
-defmodule Beatrix.GithubParser.ResponseProcessing do
+defmodule Beatrix.GithubParser.AwesomeParser do
   require Logger
   alias Beatrix.Repo
   alias Beatrix.Schemas.Repository

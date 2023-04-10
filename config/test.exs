@@ -1,8 +1,8 @@
 import Config
 
 config :beatrix, Beatrix.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "beatrix",
+  password: "beatrix",
   hostname: "localhost",
   database: "beatrix_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,

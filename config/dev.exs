@@ -32,11 +32,9 @@ config :beatrix, BeatrixWeb.Endpoint,
 Logger.add_backend({LoggerFileBackend, :info})
 
 config :logger,
-  backends: [:console, {LoggerFileBackend, :file_log}]
+  backends: [:console]
 
 config :logger, :console, format: "[$level] $message\n"
-
-config :logger, :file_log, path: "info.log"
 
 config :phoenix, :stacktrace_depth, 20
 

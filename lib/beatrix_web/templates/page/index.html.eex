@@ -1,3 +1,4 @@
+<h1> Awesome elixir </h1>
 <%= for  category  <-  @categories  do %>
     <ul>
         <%= category.name %>:
