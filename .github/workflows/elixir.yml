@@ -5,7 +5,7 @@ on: [ push, pull_request ]
 jobs:
   build:
     name: Build and test
-    runs-on: ubuntu18
+    runs-on: ubuntu20
     services:
       postgresdb:
         image: postgres:11
