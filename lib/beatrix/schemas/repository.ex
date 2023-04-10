@@ -10,6 +10,7 @@ defmodule Beatrix.Schemas.Repository do
     field :url, :string
     field :owner_name, :string
     field :star_count, :integer
+    field :pushed_at, :utc_datetime
     belongs_to :category, Beatrix.Schemas.Category
 
     timestamps()
@@ -27,16 +28,19 @@ defmodule Beatrix.Schemas.Repository do
   end
 
   def bulk_update_star_count_by_name(list) do
-    try do
-      Enum.map(list, fn [id, star_count] ->
-        Repo.get(Beatrix.Schemas.Repository, id)
-        |> Ecto.Changeset.change(star_count: star_count)
-        |> Repo.update()
-      end)
-    rescue
-      _ ->
-        {:error, nil}
-    end
+    Enum.map(list, fn [id, {pushed_at, star_count}] ->
+      pushed_at_datetime =
+        if !is_nil(pushed_at) do
+          {:ok, time, _} = DateTime.from_iso8601(pushed_at)
+          time
+        else
+          nil
+        end
+
+      Repo.get(Beatrix.Schemas.Repository, id)
+      |> Ecto.Changeset.change(star_count: star_count, pushed_at: pushed_at_datetime)
+      |> Repo.update()
+    end)
   end
 
   def save_repository_link_to_category(repo_name, url, owner_name, description, category) do

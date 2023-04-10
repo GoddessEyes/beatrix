@@ -2,7 +2,6 @@ defmodule BeatrixWeb.PageController do
   use BeatrixWeb, :controller
   alias Beatrix.Repo
   alias Beatrix.Schemas.Category
-  alias Beatrix.Schemas.Repository
   import Ecto.Query, only: [from: 2]
 
   def index(conn, params) do

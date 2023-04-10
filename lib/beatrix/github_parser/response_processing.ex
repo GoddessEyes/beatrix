@@ -1,10 +1,7 @@
 defmodule Beatrix.GithubParser.Processing do
   alias Beatrix.GithubParser.Github
-  alias Beatrix.Repo
   alias Beatrix.Schemas.Repository
   alias Beatrix.GithubParser.ResponseProcessing
-
-  @awesome_elixir_readme_url "https://raw.githubusercontent.com/h4cc/awesome-elixir/master/README.md"
 
   def start do
     #    Github.get_awesome_list()

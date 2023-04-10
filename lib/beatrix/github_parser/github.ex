@@ -6,26 +6,34 @@ defmodule Beatrix.GithubParser.Github do
   @github_token Application.compile_env(:beatrix, :token)
 
   def async_stream_for_repos_star_count(repo_url_list) do
+    IO.puts(@github_token)
+
     repo_url_list
-    |> Task.async_stream(&make_auth_request_for_start_count/1)
-    |> Enum.into([], fn {:ok, [id, start_count]} -> [id, start_count] end)
+    |> Task.async_stream(&make_auth_request_for_start_count/1,
+      max_concurrency: 500,
+      timeout: 20000
+    )
+    |> Enum.into([], fn {:ok,
+                         [id, %{"pushed_at" => pushed_at, "stargazers_count" => stargazers_count}]} ->
+      [id, {pushed_at, stargazers_count}]
+    end)
   end
 
   def make_auth_request_for_start_count([id, url]) do
     case HTTPoison.get(url, [Authorization: "Bearer #{@github_token}"], follow_redirect: true) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        start_count =
+        repo_data =
           body
           |> Jason.decode!()
-          |> Map.fetch!("stargazers_count")
+          |> Map.take(["stargazers_count", "pushed_at"])
 
-        [id, start_count]
+        [id, repo_data]
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        [id, 0]
+        [id, %{"pushed_at" => nil, "stargazers_count" => 0}]
 
       {:error, %HTTPoison.Error{reason: _}} ->
-        [id, 0]
+        [id, %{"pushed_at" => nil, "stargazers_count" => 0}]
     end
   end
 
@@ -50,5 +58,3 @@ defmodule Beatrix.GithubParser.Github do
     end
   end
 end
-
-# Beatrix.GithubParser.Github
