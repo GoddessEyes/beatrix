@@ -1,4 +1,5 @@
 defmodule Beatrix.Schemas.Repository do
+  @moduledoc false
   use Ecto.Schema
   alias Beatrix.Repo
   import Ecto.Changeset
@@ -30,11 +31,11 @@ defmodule Beatrix.Schemas.Repository do
   def bulk_update_star_count_pushed_at(list) do
     Enum.map(list, fn [id, {pushed_at, star_count}] ->
       pushed_at_datetime =
-        if !is_nil(pushed_at) do
+        if is_nil(pushed_at) do
+          nil
+        else
           {:ok, time, _} = DateTime.from_iso8601(pushed_at)
           time
-        else
-          nil
         end
 
       Repo.get(Beatrix.Schemas.Repository, id)

@@ -1,4 +1,8 @@
 defmodule Beatrix.GithubParser.AwesomeParser do
+  @moduledoc """
+    Parsing response (in ast format) from github elixir-awesome-list.
+    Trying to find categories and repository lines and save it
+  """
   require Logger
   alias Beatrix.Repo
   alias Beatrix.Schemas.Repository
@@ -62,33 +66,29 @@ defmodule Beatrix.GithubParser.AwesomeParser do
     case repo_data do
       [{"a", [{"href", url}], [repo_name], %{}}, description | _] ->
         owner_name = get_repo_owner(url)
-
-        cond do
-          owner_name === nil ->
-            parse_and_save(:repos, category, repos_tail, processed_list)
-
-          true ->
-            repository_instance = Repo.get_by(Repository, repo_name: repo_name)
-
-            case repository_instance do
-              nil ->
-                Repository.save_repository_link_to_category(
-                  repo_name,
-                  url,
-                  owner_name,
-                  description,
-                  category
-                )
-
-                parse_and_save(:repos, category, repos_tail, processed_list)
-
-              _ ->
-                parse_and_save(:repos, category, repos_tail, processed_list)
-            end
-        end
+        try_save_category!(owner_name, url, repo_name, description, category)
+        parse_and_save(:repos, category, repos_tail, processed_list)
 
       _ ->
         parse_and_save(:repos, category, repos_tail, processed_list)
+    end
+  end
+
+  def try_save_category!(owner_name, url, repo_name, description, category) do
+    if is_nil(owner_name) do
+      nil
+    else
+      repository_instance = Repo.get_by(Repository, repo_name: repo_name)
+
+      if is_nil(repository_instance) do
+        Repository.save_repository_link_to_category(
+          repo_name,
+          url,
+          owner_name,
+          description,
+          category
+        )
+      end
     end
   end
 

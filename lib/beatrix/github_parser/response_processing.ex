@@ -1,4 +1,7 @@
 defmodule Beatrix.GithubParser.ResponseProcessing do
+  @moduledoc """
+  Entrypoint for parsing&save github repos
+  """
   alias Beatrix.GithubParser.Github
   alias Beatrix.Schemas.Repository
   alias Beatrix.GithubParser.AwesomeParser

@@ -1,5 +1,9 @@
 defmodule Beatrix.GithubParser.Github do
+  @moduledoc """
+  Module requests to Github, building urls for github api
+  """
   use HTTPoison.Base
+  require Logger
 
   @awesome_elixir_readme_url "https://raw.githubusercontent.com/h4cc/awesome-elixir/master/README.md"
   @repo_url "https://api.github.com/repos/"
@@ -9,7 +13,7 @@ defmodule Beatrix.GithubParser.Github do
     repo_url_list
     |> Task.async_stream(&make_auth_request_fetch_fields/1,
       max_concurrency: 500,
-      timeout: 20000
+      timeout: 20_000
     )
     |> Enum.into([], fn {:ok,
                          [id, %{"pushed_at" => pushed_at, "stargazers_count" => stargazers_count}]} ->
@@ -49,10 +53,10 @@ defmodule Beatrix.GithubParser.Github do
         body
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts("Not found :(")
+        Logger.info("Not found :(")
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
+        Logger.info(reason)
     end
   end
 end

@@ -50,7 +50,8 @@ defmodule Beatrix.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 2.0"},
       {:earmark, "~> 1.4"},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
