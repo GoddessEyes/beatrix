@@ -9,7 +9,8 @@ defmodule Beatrix.Application do
       Beatrix.Repo,
       BeatrixWeb.Telemetry,
       {Phoenix.PubSub, name: Beatrix.PubSub},
-      BeatrixWeb.Endpoint
+      BeatrixWeb.Endpoint,
+      Beatrix.Scheduler
     ]
 
     opts = [strategy: :one_for_one, name: Beatrix.Supervisor]

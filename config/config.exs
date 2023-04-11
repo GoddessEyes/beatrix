@@ -31,6 +31,14 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :logger, level: :debug
+
 config :phoenix, :json_library, Jason
+
+config :beatrix, Beatrix.Scheduler,
+  jobs: [
+    # Runs every midnight:
+    {"@daily", {Beatrix.GithubParser.ResponseProcessing, :start, []}}
+  ]
 
 import_config "#{config_env()}.exs"

@@ -51,7 +51,8 @@ defmodule Beatrix.MixProject do
       {:httpoison, "~> 2.0"},
       {:earmark, "~> 1.4"},
       {:timex, "~> 3.7"},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:quantum, "~> 3.0"}
     ]
   end
 
