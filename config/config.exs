@@ -14,18 +14,7 @@ config :beatrix, BeatrixWeb.Endpoint,
   pubsub_server: Beatrix.PubSub,
   live_view: [signing_salt: "ykwIaxs8"]
 
-config :beatrix, Beatrix.Mailer, adapter: Swoosh.Adapters.Local
-
-config :swoosh, :api_client, false
-
-config :esbuild,
-  version: "0.14.29",
-  default: [
-    args:
-      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-    cd: Path.expand("../assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
-  ]
+config :esbuild, :version, "0.16.4"
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

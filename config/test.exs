@@ -13,8 +13,6 @@ config :beatrix, BeatrixWeb.Endpoint,
   secret_key_base: "LLGo/ejLVixVHtenIgcieBOotNwmpZvLPENt/DLp18l1mZQBRkWfKQgWQQbKg3xY",
   server: false
 
-config :beatrix, Beatrix.Mailer, adapter: Swoosh.Adapters.Test
-
 config :logger, level: :warn
 
 config :phoenix, :plug_init_mode, :runtime

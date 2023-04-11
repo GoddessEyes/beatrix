@@ -1,0 +1,25 @@
+<h1 style="padding: 20px;background-color: #ABBAEA;"> Awesome elixir </h1>
+
+<%= for  category  <-  @categories  do %>
+<ul style="background-color: #BEEBED">
+
+    <h3 style="padding: 20px;background-color: #41d0a2;">
+        <%= category.name %>:
+    </h3>
+
+    <%= for repository <- category.repositories do %>
+
+    <li style="list-style-type: none;">
+        <div style="padding: 20px;background-color: #ABBAEA;">
+            Repo: <%= link repository.repo_name, to: repository.url, target: "_blank" %>
+            Description: <%= repository.description %> <br>
+            Star: <%= repository.star_count %> <br>
+            Pushed at: <%= Timex.diff(DateTime.utc_now, repository.pushed_at, :days) %> days ago <br>
+        </div>
+        <br>
+
+    </li>
+
+    <% end %>
+</ul>
+<% end %>

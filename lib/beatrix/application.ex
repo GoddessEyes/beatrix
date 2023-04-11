@@ -7,7 +7,6 @@ defmodule Beatrix.Application do
   def start(_type, _args) do
     children = [
       Beatrix.Repo,
-      BeatrixWeb.Telemetry,
       {Phoenix.PubSub, name: Beatrix.PubSub},
       BeatrixWeb.Endpoint,
       Beatrix.Scheduler

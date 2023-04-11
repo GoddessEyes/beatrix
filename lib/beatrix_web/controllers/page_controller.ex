@@ -11,9 +11,10 @@ defmodule BeatrixWeb.PageController do
       from c in Category,
         join: r in assoc(c, :repositories),
         preload: [repositories: r],
-        where: r.star_count > ^min_stars
+        where: r.star_count > ^min_stars,
+        order_by: [asc: c.name, asc: r.repo_name]
 
     categories = Repo.all(query)
-    render(conn, "index.html", categories: categories)
+    render(conn, "page.html", categories: categories)
   end
 end
