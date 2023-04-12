@@ -25,3 +25,7 @@ __Migrate:__
 __Start parsing awesome list now:__
 
 `docker compose -f docker-compose.prod.yaml exec app bash -c /app/bin/parse`
+
+
+PS:
+If GitHub not authorize your personal-token try re-generate it and set expire 30 days
