@@ -3,11 +3,6 @@ import Config
 config :beatrix,
   ecto_repos: [Beatrix.Repo]
 
-github_token = System.get_env("GITHUB_TOKEN")
-
-config :beatrix,
-  token: github_token || nil
-
 config :beatrix, BeatrixWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [view: BeatrixWeb.ErrorView, accepts: ~w(html json), layout: false],
@@ -34,7 +29,7 @@ config :phoenix, :json_library, Jason
 config :beatrix, Beatrix.Scheduler,
   jobs: [
     # Runs every midnight:
-    {"@daily", {Beatrix.GithubParser.ResponseProcessing, :start, []}}
+    {"@daily", {Beatrix.GithubParser.ResponseProcessing, :start_task, []}}
   ]
 
 import_config "#{config_env()}.exs"

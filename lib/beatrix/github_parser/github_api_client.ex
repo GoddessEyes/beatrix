@@ -1,13 +1,12 @@
-defmodule Beatrix.GithubParser.Github do
+defmodule Beatrix.GithubParser.GithubApiClient do
   @moduledoc """
-  Module requests to Github, building urls for github api
+  Module requests to GitHub, building urls for GitHub api
   """
   use HTTPoison.Base
   require Logger
 
   @awesome_elixir_readme_url "https://raw.githubusercontent.com/h4cc/awesome-elixir/master/README.md"
   @repo_url "https://api.github.com/repos/"
-  @github_token Application.compile_env(:beatrix, :token)
 
   def async_stream_for_repos(repo_url_list) do
     repo_url_list
@@ -22,7 +21,7 @@ defmodule Beatrix.GithubParser.Github do
   end
 
   def make_auth_request_fetch_fields([id, url]) do
-    case HTTPoison.get(url, [Authorization: "Bearer #{@github_token}"], follow_redirect: true) do
+    case HTTPoison.get(url, [Authorization: "Bearer #{get_token()}"], follow_redirect: true) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         repo_data =
           body
@@ -58,5 +57,9 @@ defmodule Beatrix.GithubParser.Github do
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.info(reason)
     end
+  end
+
+  defp get_token() do
+    Application.fetch_env!(:beatrix, :token)
   end
 end

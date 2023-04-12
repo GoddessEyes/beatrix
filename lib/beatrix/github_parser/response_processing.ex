@@ -1,19 +1,23 @@
 defmodule Beatrix.GithubParser.ResponseProcessing do
   @moduledoc """
-  Entrypoint for parsing&save github repos
+  Entrypoint for parsing&save GitHub repos
   """
-  alias Beatrix.GithubParser.Github
+  alias Beatrix.GithubParser.GithubApiClient
   alias Beatrix.Schemas.Repository
   alias Beatrix.GithubParser.AwesomeParser
 
-  def start do
-    Github.get_awesome_list()
+  def start_task do
+    GithubApiClient.get_awesome_list()
     |> Earmark.as_ast!()
     |> AwesomeParser.parse_and_save()
 
     Repository.select_repos_owner_repo_name()
-    |> Github.build_repos_urls()
-    |> Github.async_stream_for_repos()
+    |> GithubApiClient.build_repos_urls()
+    |> GithubApiClient.async_stream_for_repos()
     |> Repository.bulk_update_star_count_pushed_at()
+  end
+
+  def start_command do
+    start_task()
   end
 end

@@ -1,6 +1,6 @@
 defmodule Beatrix.GithubParser.AwesomeParser do
   @moduledoc """
-    Parsing response (in ast format) from github elixir-awesome-list.
+    Parsing response (in ast format from Earmark.as_ast) from GitHub elixir-awesome-list.
     Trying to find categories and repository lines and save it
   """
   require Logger
@@ -66,21 +66,21 @@ defmodule Beatrix.GithubParser.AwesomeParser do
     case repo_data do
       [{"a", [{"href", url}], [repo_name], %{}}, description | _] ->
         owner_name = get_repo_owner(url)
-        try_save_category!(owner_name, url, repo_name, description, category)
+        try_save_repository(owner_name, url, repo_name, description, category)
         parse_and_save(:repos, category, repos_tail, processed_list)
-
       _ ->
         parse_and_save(:repos, category, repos_tail, processed_list)
     end
   end
 
-  def try_save_category!(owner_name, url, repo_name, description, category) do
+  def try_save_repository(owner_name, url, repo_name, description, category) do
     if is_nil(owner_name) do
-      nil
+      Logger.info("Owner name for repo: #{repo_name} is nil. Skip")
     else
       repository_instance = Repo.get_by(Repository, repo_name: repo_name)
 
       if is_nil(repository_instance) do
+        Logger.info("Find new repo: #{repo_name}. Try save")
         Repository.save_repository_link_to_category(
           repo_name,
           url,

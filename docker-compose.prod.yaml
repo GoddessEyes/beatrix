@@ -1,0 +1,20 @@
+services:
+  postgresdb:
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: beatrix
+      POSTGRES_PASSWORD: beatrix
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  app:
+    build:
+      context: .
+    depends_on:
+      - postgresdb
+    environment:
+      DATABASE_URL: ecto://beatrix:beatrix@postgresdb/beatrix
+#      SECRET_KEY_BASE: Fill this env with `mix phx.gen.secret`
+#      GITHUB_TOKEN: Generate personal access token see: `https://github.com/settings/tokens?type=beta`
+    ports:
+      - "4000:4000"
