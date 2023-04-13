@@ -68,6 +68,7 @@ defmodule Beatrix.GithubParser.AwesomeParser do
         owner_name = get_repo_owner(url)
         try_save_repository(owner_name, url, repo_name, description, category)
         parse_and_save(:repos, category, repos_tail, processed_list)
+
       _ ->
         parse_and_save(:repos, category, repos_tail, processed_list)
     end
@@ -81,6 +82,7 @@ defmodule Beatrix.GithubParser.AwesomeParser do
 
       if is_nil(repository_instance) do
         Logger.info("Find new repo: #{repo_name}. Try save")
+
         Repository.save_repository_link_to_category(
           repo_name,
           url,

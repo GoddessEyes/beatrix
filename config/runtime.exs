@@ -2,8 +2,7 @@ import Config
 
 HTTPoison.start()
 
-github_token =
-  System.get_env("GITHUB_TOKEN") || ""
+github_token = System.get_env("GITHUB_TOKEN") || ""
 
 config :beatrix,
   token: github_token
